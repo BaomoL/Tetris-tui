@@ -43,14 +43,14 @@ python main.py
 | Move left / right | ← / → |
 | Soft drop | ↓ |
 | Hard drop | Space |
-| Rotate clockwise | D |
+| Rotate clockwise | D or ↑ (Default) |
 | Rotate counter-clockwise | A |
 | Rotate 180° | W |
 | Hold | Shift |
 | Back to mode menu | Tab |
 | Quit | Esc |
 
-All keys can be changed in `config.py`.
+All keys except ↑, Tab and Esc can be changed in `config.py`.
 
 ## Game modes
 
