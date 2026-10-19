@@ -254,7 +254,7 @@ class Board:
         if piece.type == 't':
             for x in [0, 2]:
                 for y in [0, 2]:
-                    if self.grid[piece.y + y][piece.x + x] == '1' or self.grid[piece.y + y][piece.x + x] in self.piece_colors:
+                    if self.grid[piece.y + y][piece.x + x] != '0':
                         corners_covered += 1
     
         if piece.last_move == 'rotate' and corners_covered >= 3:
