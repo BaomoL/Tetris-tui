@@ -87,8 +87,6 @@ class Game:
         self.elapsed_time = 0
         self.last_clear_type = ''
         self.b2b_counter = 0
-        self.ultra = 0
-        self.sprint = 0
 
         # menu decides whether or not the menu should be showing
 
@@ -105,13 +103,14 @@ class Game:
         
         if self.mode == 'Sprint' and sprint is not None:
             self.line_limit = sprint
-            self.sprint = sprint
 
         if self.mode == 'Ultra' and ultra is not None:
             self.time_limit = ultra
-            self.ultra = ultra
 
         self.final_results = ''
+
+        self.sprint = self.line_limit or 0
+        self.ultra = self.time_limit or 0
 
         # default settings/stats
 
@@ -141,14 +140,14 @@ class Game:
                 self.running = False
                 self.game_over = True
 
-            self.final_results = f'{self.mode} \n\nTotal Lines Cleared: {self.total_lines}/40\nScore: {int(self.score)} \nTotal Elapsed Time: {format_time(self.elapsed_time)}'
+            self.final_results = f'{self.mode} \n\nTotal Lines Cleared: {self.total_lines}/{self.sprint}\nScore: {int(self.score)} \nTotal Elapsed Time: {format_time(self.elapsed_time)}'
 
         elif self.mode == 'Ultra':
             if self.elapsed_time >= self.ultra:
                 self.running = False
                 self.game_over = True
 
-            self.final_results = f'{self.mode} \n\nScore: {int(self.score)}\nTotal Lines Cleared: {self.total_lines} \nTotal Elapsed Time: {format_time(self.elapsed_time)}/2:00'
+            self.final_results = f'{self.mode} \n\nScore: {int(self.score)}\nTotal Lines Cleared: {self.total_lines} \nTotal Elapsed Time: {format_time(self.elapsed_time)}/{format_time(self.ultra)}'
 
 
 
@@ -408,14 +407,11 @@ class Game:
                     else:
                         touching = False
 
-                # Hardcore has timer conditions permanently fulfilled so pieces instantly solidifies
+                # Hardcore immediately solidifies piees when a piece cannot move down
 
-                else:
-                    
-                    touching = not self.board.is_valid(self.active_piece, dy=1)
-                    self.stationary_touching_timer = stationary_touch_time
-                    self.horizontal_touching_timer = horizontal_touch_time
-                    self.absolute_touching_timer = absolute_touch_time
+                elif not self.board.is_valid(self.active_piece, dy=1):
+                    self.clear()
+                    changed = True
 
                 # if a piece has been unable to move down for longer than the time granted by its respective timer
 
@@ -595,7 +591,7 @@ class Game:
 
                 # refresh only at 60 fps to avoid stuttering and cpu overload
 
-                if (changed and time.perf_counter() - last_render >= 1 / 60) or self.elapsed_time % 1 == 0:
+                if (changed and now - last_render >= 1/60) or now - last_render >= 1:
 
                     # update specific mode stats before render
                                         
