@@ -2,7 +2,7 @@
 
 Modern guideline-style Tetris that runs in your terminal, written in Python.
 
-<img width="538" height="662" alt="tetris showcase v1" src="https://github.com/user-attachments/assets/acaff94a-6f8b-418e-a5e9-1e9d3b4cd9bd" />
+<img width="325" alt="tetriirasfd" src="https://github.com/user-attachments/assets/d506a611-eb71-4e56-9dae-b0c6e599bb4f" />
 
 ## Features
 
