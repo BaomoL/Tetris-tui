@@ -2,6 +2,8 @@
 
 Modern guideline-style Tetris that runs in your terminal, written in Python.
 
+<img width="538" height="662" alt="tetris showcase v1" src="https://github.com/user-attachments/assets/acaff94a-6f8b-418e-a5e9-1e9d3b4cd9bd" />
+
 ## Features
 
 - **SRS rotation** with full wall kick tables, including the separate I-piece kicks
@@ -14,6 +16,7 @@ Modern guideline-style Tetris that runs in your terminal, written in Python.
 - **Adjustable handling:** DAS, ARR, soft drop speed and lock delay
 - **Four modes:** Marathon, Sprint, Ultra and Hardcore
 - Colored blocks with ANSI, emoji or plain ASCII styles
+
 
 ## Requirements
 
