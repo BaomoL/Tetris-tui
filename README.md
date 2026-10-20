@@ -1,4 +1,4 @@
-# Tetris-tui
+# Tetris tui
 
 Modern guideline-style Tetris that runs in your terminal, written in Python.
 
