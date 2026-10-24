@@ -160,7 +160,7 @@ class Game:
     def hold_piece(self):
 
         # allows holding a piece
-
+        if self.can_hold:
             self.can_hold = False
 
             # store pieces by default spawn positions so when called they spawn there
@@ -351,8 +351,8 @@ class Game:
             self.render_board()
 
             # because key presses are detected using an "in" statement and the set list, whether or not they are pressed or held
-            # must be tracked to ensure something like a piece spinning forever doesn't happen
-            # wait for release can't be used because it blocks rest of game loop
+            # must be tracked to ensure something like a piece spinning forever doesn't happen; 
+            # done by keeping all keys held in the previous frame
 
             # monotonic timers are used to track time passed
 
