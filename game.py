@@ -82,6 +82,7 @@ class Game:
         self.elapsed_time = 0
         self.last_clear_type = ''
         self.b2b_counter = 0
+        self.touching = False
 
         # menu decides whether or not the menu should be showing
 
@@ -149,10 +150,6 @@ class Game:
 
             self.pieces = random.sample(Game.bag, len(Game.bag)) + self.pieces
 
-        # set timer for how long it's been alive for to enforce absolute timer
-
-        self.absolute_timer = time.perf_counter()
-
         # specifically the o piece spawns in the middle by default
 
         if self.pieces[-1] == 'o':
@@ -164,8 +161,6 @@ class Game:
 
         # allows holding a piece
 
-        if self.can_hold:
-            self.gravity_timer = time.perf_counter()
             self.can_hold = False
 
             # store pieces by default spawn positions so when called they spawn there
@@ -188,6 +183,11 @@ class Game:
 
             if not self.board.is_valid(self.active_piece):
                 self.endgame()
+
+            self.reset_piece_state()
+
+
+        
 
     def show_game_over(self):
 
@@ -304,9 +304,7 @@ class Game:
 
         # reset for new piece
 
-        self.stationary_touching_timer = time.perf_counter()
-        self.horizontal_touching_timer = time.perf_counter()
-        self.gravity_timer = time.perf_counter()
+        self.reset_piece_state()
 
     # starts and tracks the current game
 
@@ -328,6 +326,17 @@ class Game:
         self.running = False
         self.game_over = True
 
+    def reset_piece_state(self):
+
+        now = time.perf_counter()
+
+        self.stationary_touching_timer = now
+        self.horizontal_touching_timer = now
+        self.absolute_timer = now
+        self.gravity_timer = now
+        self.touching = False
+
+        
     
     def start(self):
 
@@ -355,18 +364,10 @@ class Game:
             right_start_hold = time.perf_counter()
             right_held_time = time.perf_counter()
 
-            # whether or not a piece is in contention for being locked
-
-            touching = False
-
             fall_speed = self.gravity_speed
 
             # touch timers
-            self.stationary_touching_timer = time.perf_counter()
-            self.horizontal_touching_timer = time.perf_counter()
-            self.absolute_timer = time.perf_counter()
-
-            self.gravity_timer = time.perf_counter()
+            self.reset_piece_state()
 
             last_render = time.perf_counter()
 
@@ -376,7 +377,7 @@ class Game:
 
             while self.running:
 
-                #track keys pressed before the loop
+                #track keys pressed
 
                 keys_pressed = set(pressed)
 
@@ -398,18 +399,17 @@ class Game:
                 if self.mode != 'Hardcore':
 
                     if not self.board.is_valid(self.active_piece, dy=1):
-                        if not touching:
+                        if not self.touching:
                             self.stationary_touching_timer = now
                             self.horizontal_touching_timer = now
-                        touching = True
+                        self.touching = True
                     else:
-                        touching = False
+                        self.touching = False
 
                 # Hardcore immediately solidifies piees when a piece cannot move down
 
                 elif not self.board.is_valid(self.active_piece, dy=1):
                     self.clear()
-                    touching = False
 
                 # soft drop options (instant or multiplied)
 
@@ -433,10 +433,10 @@ class Game:
                             self.active_piece.y += distance
                             self.active_piece.last_move = 'move'
 
-                        if not touching:
+                        if not self.touching:
                             self.stationary_touching_timer = now
                             self.horizontal_touching_timer = now
-                        touching = True
+                        self.touching = True
 
                 # gravity; move down everytime gravity_speed has passed
 
@@ -448,18 +448,17 @@ class Game:
                         self.gravity_timer = now
 
                     else:
-                        touching = True
+                        self.touching = True
 
                 # if a piece has been unable to move down for longer than the time granted by its respective timer
 
-                if touching:
+                if self.touching:
 
                     if (now - self.stationary_touching_timer >= stationary_touch_time 
                         or now - self.absolute_timer >= absolute_time 
                         or now - self.horizontal_touching_timer >= horizontal_touch_time):
 
                         self.clear()
-                        touching = False
 
                 # hard drop bypasses all timers and immediately locks the piece
 
@@ -471,7 +470,6 @@ class Game:
                         self.active_piece.y += distance
                         self.active_piece.last_move = 'move'
                     self.clear()
-                    touching = False
 
                 # DAS and ARR implemented with monotonic timers; a key held down for DAS amount of seconds will start repeating at a rate of ARR
 
@@ -533,16 +531,9 @@ class Game:
                         self.horizontal_touching_timer = now
 
                 if hold in keys_pressed and hold not in last_pressed:
-                    if self.can_hold:
-                        self.hold_piece()
-
-                        if not self.running:
-                            break
-
-                        touching = False
-                        self.stationary_touching_timer = now
-                        self.horizontal_touching_timer = now
-                        self.gravity_timer= now
+                    self.hold_piece()
+                    if not self.running:
+                        break
 
                 if rotate_clockwise_backup in keys_pressed and rotate_clockwise_backup not in last_pressed:
                     if self.active_piece.rotate(self.board, 'c'):
