@@ -122,11 +122,11 @@ class Piece:
             new_state = (self.state + 1) % 4
 
         elif direction == 'cc':
-            new_shape = rotate_cc(self.shape)
+            new_shape = rotate_c(rotate_c(rotate_c(self.shape)))
             new_state = (self.state - 1) % 4
 
         else:
-            new_shape = rotate_180(self.shape)
+            new_shape = rotate_c(rotate_c(self.shape))
             new_state = (self.state + 2) % 4
 
         for dx, dy in kick[(self.state, new_state)]:
@@ -140,7 +140,7 @@ class Piece:
             
         return False
 
-#rotate piece matrices
+#rotate piece matrix
 
 def rotate_c(matrix):
     
@@ -152,26 +152,4 @@ def rotate_c(matrix):
             result[c][n - 1 - r] = matrix[r][c]
 
     return result
-
-def rotate_cc(matrix):
-    n = len(matrix)
-    result = [[0] * n for _ in range(n)]
-
-    for r in range(n):
-        for c in range(n):
-            result[n - 1 - c][r] = matrix[r][c]
-
-    return result
-
-def rotate_180(matrix):
-    
-    n = len(matrix)
-    result = [[0] * n for _ in range(n)]
-
-    for r in range(n):
-        for c in range(n):
-            result[r][c] = matrix[n - 1 - r][n - 1 - c]
-
-    return result
-
 
