@@ -13,7 +13,7 @@ stationary_touch_time = 0.5
 horizontal_touch_time = 5
 absolute_time =  20
 
-tick_rate = 0.005
+tick_rate = 200
 fps = 60
 
 """Rotations"""
