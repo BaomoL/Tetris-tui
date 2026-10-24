@@ -318,6 +318,20 @@ class Game:
         self.gravity_timer = time.perf_counter()
 
     # starts and tracks the current game
+
+    def render_board(self):
+        self.board.render(self.active_piece, 
+            self.held_piece,
+            self.pieces[-5:][::-1],
+            self.combo,
+            self.score,
+            self.elapsed_time,
+            self.last_clear_type,
+            self.mode,
+            self.total_lines,
+            self.level,
+            self.sprint,
+            self.ultra)
     
     def start(self):
 
@@ -330,18 +344,7 @@ class Game:
             self.time = time.perf_counter()
             sys.stdout.write('\033[2J\033[H')
 
-            self.board.render(self.active_piece, 
-                            self.held_piece,
-                            self.pieces[-5:][::-1],
-                            self.combo,
-                            self.score,
-                            self.elapsed_time,
-                            self.last_clear_type,
-                            self.mode,
-                            self.total_lines,
-                            self.level,
-                            self.sprint,
-                            self.ultra)
+            self.render_board()
 
             # because key presses are detected using an "in" statement and the set list, whether or not they are pressed or held
             # must be tracked to ensure something like a piece spinning forever doesn't happen
@@ -597,19 +600,8 @@ class Game:
                                         
                     self.update_mode()
 
-                    self.board.render(
-                        self.active_piece,
-                        self.held_piece,
-                        self.pieces[-5:][::-1],
-                        self.combo,
-                        self.score,
-                        self.elapsed_time,
-                        self.last_clear_type,
-                        self.mode,
-                        self.total_lines,
-                        self.level,
-                        self.sprint,
-                        self.ultra)
+                    self.render_board()
+
 
 
                     # track last frame

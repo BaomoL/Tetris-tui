@@ -132,7 +132,7 @@ class Piece:
             
         return False
 
-#rotate piece matrix
+#rotate piece clockwise
 
 def rotate_c(matrix):
     
