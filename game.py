@@ -96,7 +96,7 @@ class Game:
         self.mode = Game.modes[game_mode]['game_mode']
         self.line_limit = Game.modes[game_mode]['line_limit']
         self.time_limit = Game.modes[game_mode]['time_limit']
-        self.gravity = 1
+        self.gravity_speed = 1
 
         # set options from menu
         
