@@ -36,12 +36,12 @@ class Board:
 
     piece_colors = piece_color(t, z, s, i, l, j, o, all_pieces)
     empty_row = '100000000001'
+    floor_row = '111111111111'
 
-    # create 22x12 board, 3s represent borders and 0s represent empty space
+    # create 22x12 board, 1s represent borders and 0s represent empty space
 
     def __init__(self):
-        self.grid = [[Board.empty_row] for x in range ( 21)] + [['111111111111']]
-        self.grid = [list(row[0]) for row in self.grid]
+        self.grid = [list(Board.empty_row) for _ in range ( 21)] + [list(Board.floor_row)]
         self.placed_pieces = 0
 
     # render is in charge of displaying current game state; called whenever there is a change

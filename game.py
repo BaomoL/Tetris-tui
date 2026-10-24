@@ -137,15 +137,13 @@ class Game:
 
         elif self.mode == 'Sprint':
             if self.total_lines >= self.sprint:
-                self.running = False
-                self.game_over = True
+                self.endgame()
 
             self.final_results = f'{self.mode} \n\nTotal Lines Cleared: {self.total_lines}/{self.sprint}\nScore: {int(self.score)} \nTotal Elapsed Time: {format_time(self.elapsed_time)}'
 
         elif self.mode == 'Ultra':
             if self.elapsed_time >= self.ultra:
-                self.running = False
-                self.game_over = True
+                self.endgame()
 
             self.final_results = f'{self.mode} \n\nScore: {int(self.score)}\nTotal Lines Cleared: {self.total_lines} \nTotal Elapsed Time: {format_time(self.elapsed_time)}/{format_time(self.ultra)}'
 
@@ -192,8 +190,7 @@ class Game:
             # if trying to spawn a held piece is impossible then the game ends (an edge case)
 
             if not self.board.is_valid(self.active_piece):
-                self.game_over = True
-                self.running = False
+                self.endgame()
 
     def show_game_over(self):
 
@@ -307,8 +304,7 @@ class Game:
         # if a new piece can't exist = end game
 
         if not self.board.is_valid(self.active_piece):
-            self.running = False
-            self.game_over = True
+            self.endgame()
 
         # reset for new piece
 
@@ -332,6 +328,11 @@ class Game:
             self.level,
             self.sprint,
             self.ultra)
+
+    def endgame(self):
+        self.running = False
+        self.game_over = True
+
     
     def start(self):
 
