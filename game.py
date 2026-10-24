@@ -446,7 +446,7 @@ class Game:
                     steps = int(elapsed / interval)
 
                     for _ in range(steps):
-                        if not self.active_piece.fall(self.board, 1):
+                        if not self.active_piece.move(self.board, 'down'):
                             break
 
                     self.gravity_timer += steps * interval
@@ -458,7 +458,7 @@ class Game:
 
                     if not space_held:
                         while self.board.is_valid(self.active_piece, dy =1):
-                            self.active_piece.fall(self.board, 1)
+                            self.active_piece.move(self.board, 'down')
 
                         self.clear()
                         changed = True

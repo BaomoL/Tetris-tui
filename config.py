@@ -14,7 +14,7 @@ horizontal_touch_time = 5
 absolute_touch_time =  20
 
 """Rotations"""
-rotate_clockwise =          'd'
+rotate_clockwise =          's'
 rotate_counter_clockwise =  'a'
 rotate_one_eighty =         'w'
 

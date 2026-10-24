@@ -96,14 +96,6 @@ class Piece:
         else:
             return False
 
-    def fall(self, board, dy):
-        
-        if board.is_valid(self, dy=dy):
-            self.y += dy
-            self.last_move = 'move'
-            return True
-        return False
-
     # rotation check if new position is valid, if not then tests series of kick positions
     
     def rotate(self, board, direction):
