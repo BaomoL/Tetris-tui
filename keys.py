@@ -1,4 +1,4 @@
-from pynput.keyboard import Key, Listener
+from pynput.keyboard import Listener
 
 # add/remove pressed key from a set
 

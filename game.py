@@ -3,13 +3,12 @@ from terminal import raw_mode
 from pynput.keyboard import Key
 
 from config import (das, arr, soft_drop_multiplier, stationary_touch_time,
-                    horizontal_touch_time, absolute_time,
-                    rotate_clockwise, rotate_counter_clockwise, rotate_one_eighty, rotate_clockwise_backup,
-                    move_left, move_right, soft_drop, hard_drop, hold, fps, tick_rate)
+                    horizontal_touch_time, absolute_time, fps, tick_rate)
 
-from keys import pressed
 from board import Board, format_time
 from pieces import Piece
+from controls import Controls, Action
+from keys import pressed
 
 # game class contains all ongoing game states
 
@@ -186,9 +185,6 @@ class Game:
 
             self.reset_piece_state()
 
-
-        
-
     def show_game_over(self):
 
         # for when game ends
@@ -350,10 +346,6 @@ class Game:
 
             self.render_board()
 
-            # because key presses are detected using an "in" statement and the set list, whether or not they are pressed or held
-            # must be tracked to ensure something like a piece spinning forever doesn't happen; 
-            # done by keeping all keys held in the previous frame
-
             # monotonic timers are used to track time passed
 
             left_held = False
@@ -373,13 +365,21 @@ class Game:
 
             start_time = time.perf_counter()
 
-            last_pressed = set()
+            # rotations
+
+            rotations = {Action.ROTATE_CW: 'c', Action.ROTATE_CCW: 'cc', Action.ROTATE_180: '180'}
+
+            # import controls
+
+            inputs = Controls()
 
             while self.running:
 
                 #track keys pressed
 
-                keys_pressed = set(pressed)
+                new_actions, held_actions = inputs.read()
+
+                keys_pressed = pressed
 
                 # allow game to be reset/quit
 
@@ -415,7 +415,7 @@ class Game:
 
                 if soft_drop_multiplier != 'instant':
 
-                    if soft_drop in keys_pressed:
+                    if Action.SOFT_DROP in held_actions:
                         fall_speed = self.gravity_speed/soft_drop_multiplier
                     else:
                         fall_speed = self.gravity_speed
@@ -426,7 +426,7 @@ class Game:
 
                     # distance must be gauged to determine new y value; last_move changed accordingly for t_spins
 
-                    if soft_drop in keys_pressed:
+                    if Action.SOFT_DROP in held_actions:
                         distance = self.board.drop_distance(self.active_piece)
 
                         if distance > 0:
@@ -462,7 +462,7 @@ class Game:
 
                 # hard drop bypasses all timers and immediately locks the piece
 
-                if hard_drop in keys_pressed and hard_drop not in last_pressed:
+                if Action.HARD_DROP in new_actions:
 
                     distance = self.board.drop_distance(self.active_piece)
 
@@ -473,7 +473,7 @@ class Game:
 
                 # DAS and ARR implemented with monotonic timers; a key held down for DAS amount of seconds will start repeating at a rate of ARR
 
-                if move_left in keys_pressed and not right_held:
+                if Action.LEFT in held_actions and not right_held:
 
                     if not left_held:
 
@@ -493,7 +493,7 @@ class Game:
 
                             left_held_time = now
 
-                if move_right in keys_pressed and not left_held:
+                if Action.RIGHT in held_actions and not left_held:
 
                     if not right_held:
 
@@ -513,39 +513,25 @@ class Game:
                     
                             right_held_time = now
 
-                # ensure that only a new press rotates pieces using last_pressed
+                # loops through ways of rotating and compares to list of inputs
 
-                if rotate_clockwise in keys_pressed and rotate_clockwise not in last_pressed:
-                    if self.active_piece.rotate(self.board, 'c'):
-                        self.stationary_touching_timer = now
-                        self.horizontal_touching_timer = now
+                for direction in rotations:
+                    if direction in new_actions:
+                        if self.active_piece.rotate(self.board, rotations[direction]):
+                            self.stationary_touching_timer = now
+                            self.horizontal_touching_timer = now
 
-                if rotate_counter_clockwise in keys_pressed and rotate_counter_clockwise not in last_pressed:
-                    if self.active_piece.rotate(self.board, 'cc'):
-                        self.stationary_touching_timer = now
-                        self.horizontal_touching_timer = now
-
-                if rotate_one_eighty in keys_pressed and rotate_one_eighty not in last_pressed:
-                    if self.active_piece.rotate(self.board, '180'):
-                        self.stationary_touching_timer = now
-                        self.horizontal_touching_timer = now
-
-                if hold in keys_pressed and hold not in last_pressed:
+                if Action.HOLD in new_actions:
                     self.hold_piece()
                     if not self.running:
                         break
 
-                if rotate_clockwise_backup in keys_pressed and rotate_clockwise_backup not in last_pressed:
-                    if self.active_piece.rotate(self.board, 'c'):
-                        self.stationary_touching_timer = now
-                        self.horizontal_touching_timer = now
-
                 # reset key states when released
                 
-                if move_left not in keys_pressed:
+                if Action.LEFT not in held_actions:
                     left_held = False
                     
-                if move_right not in keys_pressed:
+                if Action.RIGHT not in held_actions:
                     right_held = False
 
                 # refresh only at fps to avoid stuttering and cpu overload
@@ -560,14 +546,9 @@ class Game:
                     
                     last_render = now
 
-                # save last pressed buttons
-
-                last_pressed = keys_pressed
-
                 # polling rate
 
                 time.sleep(1/tick_rate)
-
 
 
             if self.game_over:
