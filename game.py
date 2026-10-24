@@ -62,6 +62,10 @@ class Game:
         'time_limit': None,
     } }
 
+    # rotations
+
+    rotations = {Action.ROTATE_CW: 'c', Action.ROTATE_CCW: 'cc', Action.ROTATE_180: '180'}
+
 
     def __init__(self, game_mode, sprint=None, ultra=None):
 
@@ -332,8 +336,6 @@ class Game:
         self.gravity_timer = now
         self.touching = False
 
-        
-    
     def start(self):
 
         self.update_mode()
@@ -365,10 +367,6 @@ class Game:
 
             start_time = time.perf_counter()
 
-            # rotations
-
-            rotations = {Action.ROTATE_CW: 'c', Action.ROTATE_CCW: 'cc', Action.ROTATE_180: '180'}
-
             # import controls
 
             inputs = Controls()
@@ -379,13 +377,11 @@ class Game:
 
                 new_actions, held_actions = inputs.read()
 
-                keys_pressed = pressed
-
                 # allow game to be reset/quit
 
-                if Key.esc in keys_pressed:
+                if Key.esc in pressed:
                     self.running = False
-                if Key.tab in keys_pressed:
+                if Key.tab in pressed:
                     self.menu = True
                     self.running = False
 
@@ -515,9 +511,9 @@ class Game:
 
                 # loops through ways of rotating and compares to list of inputs
 
-                for direction in rotations:
-                    if direction in new_actions:
-                        if self.active_piece.rotate(self.board, rotations[direction]):
+                for action in Game.rotations:
+                    if action in new_actions:
+                        if self.active_piece.rotate(self.board, Game.rotations[action]):
                             self.stationary_touching_timer = now
                             self.horizontal_touching_timer = now
 

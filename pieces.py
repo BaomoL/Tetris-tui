@@ -99,6 +99,7 @@ class Piece:
     # rotation check if new position is valid, if not then tests series of kick positions
     
     def rotate(self, board, direction):
+        assert direction in ('c', 'cc', '180')
         if self.type == 'o':
             return
         elif direction == '180':
