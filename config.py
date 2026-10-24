@@ -8,12 +8,17 @@ t, z, s, i ,l, j, o = None, None, None, None, None, None, None
 """Game Settings"""
 das = 0.1
 arr = 0.01
-soft_drop_multiplier = 100
+soft_drop_multiplier = 50
 stationary_touch_time = 0.5
 horizontal_touch_time = 5
-absolute_touch_time =  20
+absolute_time =  20
+
+tick_rate = 0.005
+fps = 60
 
 """Rotations"""
+rotate_clockwise_backup =   Key.up
+
 rotate_clockwise =          's'
 rotate_counter_clockwise =  'a'
 rotate_one_eighty =         'w'

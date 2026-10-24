@@ -70,8 +70,7 @@ class Board:
 
         ghost_y = piece.y
 
-        while self.is_valid(piece, dy=ghost_y - piece.y + 1):
-            ghost_y += 1
+        ghost_y += self.drop_distance(piece)
             
         for y in range(len(piece.shape)):
             for x in range(len(piece.shape[y])):
@@ -201,7 +200,18 @@ class Board:
             '\n'.join('\033[2K' + row for row in board_lines))        
         sys.stdout.flush()
 
-    # permanently append the piece to the real board    
+    # gauge how far a piece can drop
+
+    def drop_distance(self, piece):
+
+        distance = 1
+
+        while self.is_valid(piece, dy = distance):
+            distance += 1
+
+        return distance - 1
+
+    # permanently append the piece to the real board
 
     def lock_piece(self, piece):
 
