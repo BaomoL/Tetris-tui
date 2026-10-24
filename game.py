@@ -74,7 +74,6 @@ class Game:
 
         self.board = Board()
         self.running = False
-        self.time = None
         self.pieces = random.sample(Game.bag, len(Game.bag))
         self.active_piece = self.new_piece()
         self.held_piece = None
@@ -97,7 +96,7 @@ class Game:
         self.mode = Game.modes[game_mode]['game_mode']
         self.line_limit = Game.modes[game_mode]['line_limit']
         self.time_limit = Game.modes[game_mode]['time_limit']
-        self.gravity = Game.modes[game_mode]['gravity']
+        self.gravity = 1
 
         # set options from menu
         
@@ -116,9 +115,6 @@ class Game:
 
         self.total_lines = 0
         self.level = 1
-
-        if self.gravity:
-            self.gravity_speed = 1
 
     def update_mode(self):
 
@@ -209,7 +205,7 @@ class Game:
     # perfect clear bonus
     # all tracked using states defined into the game instance upon game creation
 
-    def calculate_score(self, lines_clear, combo, t_spin, pc):
+    def calculate_score(self, lines_clear, t_spin, pc):
 
         base_score = 0
 
@@ -231,7 +227,7 @@ class Game:
             if lines_clear > 0:
                 self.b2b = False
 
-        return (base_score * self.b2b_mul + 50 * max(combo - 1, 0)) * self.level
+        return (base_score * self.b2b_mul + 50 * max(self.combo - 1, 0)) * self.level
 
     # returns a string to be printed by render()
 
@@ -296,8 +292,7 @@ class Game:
         else:
             self.combo = 0
 
-        self.score += self.calculate_score(lines, self.combo, t_spin, perfect)
-        perfect = False
+        self.score += self.calculate_score(lines, t_spin, perfect)
         self.active_piece = self.new_piece()
         self.can_hold = True
 
@@ -342,7 +337,6 @@ class Game:
 
         with raw_mode():
 
-            self.time = time.perf_counter()
             sys.stdout.write('\033[2J\033[H')
 
             self.render_board()
