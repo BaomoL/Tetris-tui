@@ -35,11 +35,12 @@ def format_time(seconds):
 class Board:
 
     piece_colors = piece_color(t, z, s, i, l, j, o, all_pieces)
+    empty_row = '100000000001'
 
     # create 22x12 board, 3s represent borders and 0s represent empty space
 
     def __init__(self):
-        self.grid = [['100000000001'] for x in range ( 21)] + [['111111111111']]
+        self.grid = [[Board.empty_row] for x in range ( 21)] + [['111111111111']]
         self.grid = [list(row[0]) for row in self.grid]
         self.placed_pieces = 0
 
@@ -267,7 +268,7 @@ class Board:
         for y in range(0, len(self.grid) - 1):
             if all(x in self.piece_colors for x in self.grid[y][1:-1]):
                 self.grid.pop(y)
-                self.grid.insert(0, list('100000000001'))
+                self.grid.insert(0, list(Board.empty_row))
                 cleared += 1
 
         return cleared
