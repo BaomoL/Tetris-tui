@@ -223,7 +223,6 @@ class Game:
         else:
             base_score = base_score + Game.score[lines_clear]
 
-
         if lines_clear > 0 and (lines_clear == 4 or t_spin):
             if self.b2b:
                 self.b2b_mul = 1.5
@@ -249,6 +248,7 @@ class Game:
                 result = 'T-Spin Triple'
             else:
                 return None
+            
         elif lines == 1:
             result = 'Single'
         elif lines == 2:
@@ -277,7 +277,7 @@ class Game:
 
     def clear(self):
 
-        # determine if it's a t_spin or a perfect clear, then lock piece and update score
+        # determine if it's a t-spin or a perfect clear, then lock piece and update score
 
         t_spin = self.board.detect_t_spin(self.active_piece)
         self.board.lock_piece(self.active_piece)
@@ -599,11 +599,7 @@ class Game:
                     # update specific mode stats before render
                                         
                     self.update_mode()
-
                     self.render_board()
-
-
-
                     # track last frame
                     
                     last_render = time.perf_counter()

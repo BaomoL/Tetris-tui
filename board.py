@@ -17,13 +17,8 @@ def piece_color(t = None, z = None, s = None, i = None, l = None, j = None, o = 
         piece_colors['7'] = j
         piece_colors['8'] = o
     else:
-        piece_colors['2'] = all_pieces
-        piece_colors['3'] = all_pieces
-        piece_colors['4'] = all_pieces
-        piece_colors['5'] = all_pieces
-        piece_colors['6'] = all_pieces
-        piece_colors['7'] = all_pieces
-        piece_colors['8'] = all_pieces
+        for x in range(2, 9):
+            piece_colors[str(x)] = all_pieces
 
     return piece_colors
 
@@ -54,7 +49,7 @@ class Board:
                combo, score, elapsed_time, place_type, 
                game_mode, lines_cleared, level, sprint, ultra):
 
-        #create duplicate board to make changes (display the piece) to before printing
+        #create duplicate board (bored) to make changes (display the piece) to before printing
 
         bored = [row[:] for row in self.grid]
 
