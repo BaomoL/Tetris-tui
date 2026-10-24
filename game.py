@@ -373,7 +373,7 @@ class Game:
 
             while self.running:
 
-                #track keys pressed
+                #track keys pressedgit add -A
 
                 new_actions, held_actions = inputs.read()
 

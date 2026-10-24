@@ -29,7 +29,7 @@ keybinds = {rotate_clockwise: Action.ROTATE_CW,
 class Controls:
 
     def __init__(self):
-        self.last_held = set()
+        self.last_held = set(pressed)
 
     def read(self):
 

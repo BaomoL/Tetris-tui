@@ -30,50 +30,48 @@ class Piece:
     (1, 3): [(0, 0), (1, 0)],
     (2, 0): [(0, 0), (0, 1)],
     (3, 1): [(0, 0), (-1, 0)]}
-
     # number determines character representing piece <- pulled from dictionary set at the beginning
+    shapes = {
+        't': [[0, 2, 0],
+              [2, 2, 2],
+              [0, 0, 0]],
+
+        'z': [[3, 3, 0],
+              [0, 3, 3],
+              [0, 0, 0]],
+
+        's': [[0, 4, 4],
+              [4, 4, 0],
+              [0, 0, 0]],
+
+        'i': [[0, 0, 0, 0],
+              [5, 5, 5, 5],
+              [0, 0, 0, 0],
+              [0, 0, 0, 0]],
+
+        'l': [[0, 0, 6],
+              [6, 6, 6],
+              [0, 0, 0]],
+
+        'j': [[7, 0, 0],
+              [7, 7, 7],
+              [0, 0, 0]],
+
+        'o': [[8, 8],
+              [8, 8]],
+    }
 
     def __init__(self, shape, x, y):
-        assert shape in ('t', 'z', 's', 'l', 'j', 'i', 'o')
+        assert shape in Piece.shapes
         self.x = x
         self.y = y
         self.state = 0
         self.type = shape
         self.last_move = None
-        if shape == 't':
-            self.shape = [[0, 2, 0],
-                          [2, 2, 2],
-                          [0, 0, 0]]
-            
-        elif shape == 'z':
-            self.shape = [[3, 3, 0],
-                          [0, 3, 3],
-                          [0, 0, 0]]
 
-        elif shape == 's':
-            self.shape = [[0, 4, 4],
-                          [4, 4, 0],
-                          [0, 0, 0]]
+        # copy piece shape onto shape (list comprehension avoids shallow copy)
 
-        elif shape == 'i':
-            self.shape = [[0, 0, 0, 0],
-                          [5, 5, 5, 5],
-                          [0, 0, 0, 0],
-                          [0, 0, 0, 0]]
-
-        elif shape == 'l':
-            self.shape = [[0, 0, 6],
-                          [6, 6, 6],
-                          [0, 0, 0]]
-
-        elif shape == 'j':
-            self.shape = [[7, 0, 0],
-                          [7, 7, 7],
-                          [0, 0, 0]]
-
-        else:
-            self.shape = [[8, 8],
-                          [8, 8]]
+        self.shape = [row[:] for row in Piece.shapes[shape]]
 
     # direction only altered if it passes the validity check
 

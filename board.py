@@ -86,50 +86,47 @@ class Board:
 
         if held_piece:
             for y in range(len(held_piece.shape)):
-                new_line = ''
+                parts = []
                 for x in range(len(held_piece.shape[y])):
                     if held_piece.shape[y][x]:
-                        new_line += Board.piece_colors[str(held_piece.shape[y][x])]
+                        parts.append(Board.piece_colors[str(held_piece.shape[y][x])])
                     else:
-                        new_line += space
-                new_line += space * (5 - len(held_piece.shape[y]))
-                hold_lines.append(new_line)
-
-        upcoming_pieces = []
+                        parts.append(space)
+                parts.append(space * (5 - len(held_piece.shape[y])))
+                hold_lines.append(''.join(parts))
 
         # same process for upcoming pieces
 
-        for piece in upcoming:
-
-            upcoming_pieces.append(Piece(piece, 0, 0))
-
         next_lines = [space * 5] * 2
 
-        for piece in upcoming_pieces:
-            for y in range(len(piece.shape)):
-                new_line = ''
-                for x in range(len(piece.shape[y])):
-                    if piece.shape[y][x]:
-                        new_line += Board.piece_colors[str(piece.shape[y][x])]
+        # grab just the shapes of the pieces from dictionary
+
+        for pieces in upcoming:
+            pieces = [row[:] for row in Piece.shapes[pieces]]
+            for y in range(len(pieces)):
+                parts = []
+                for x in range(len(pieces[y])):
+                    if pieces[y][x]:
+                        parts.append(Board.piece_colors[str(pieces[y][x])])
                     else:
-                        new_line += space
-                next_lines.append(new_line)
+                        parts.append(space)
+                next_lines.append(''.join(parts))
             next_lines.append('')
 
         # turns current piece and ghost piece (as determined from earlier) into characters (along with everything else)
         
         for y in bored:
-            row = ''
+            parts = []
             for x in y:
                 if x in Board.piece_colors:
-                    row += Board.piece_colors[x]
+                    parts.append(Board.piece_colors[x])
                 elif x == '9':
-                    row += ghost_piece 
+                    parts.append(ghost_piece)
                 elif x == '1':
-                    row += border
+                    parts.append(border)
                 else:
-                    row += space
-            board_lines.append(row)
+                    parts.append(space)
+            board_lines.append(''.join(parts))
 
         # appends both held piece and queued pieces to left and right by appending each row's list at a time
 
@@ -137,7 +134,7 @@ class Board:
 
             left = hold_lines[i] if i < len(hold_lines) else space * 5
             right = next_lines[i] if i < len(next_lines) else ''
-            board_lines[i] = left + board_lines[i] + space * 2 + right
+            board_lines[i] = ''.join([left, board_lines[i], space * 2, right])
 
         board_lines = [row for row in board_lines for _ in range(height)]
 
@@ -197,7 +194,8 @@ class Board:
         
         sys.stdout.write(
             '\033[H' +
-            '\n'.join('\033[2K' + row for row in board_lines))        
+            '\n'.join(row + '\033[K' for row in board_lines) +
+            '\033[J')      
         sys.stdout.flush()
 
     # gauge how far a piece can drop
